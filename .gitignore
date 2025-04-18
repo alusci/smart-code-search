@@ -172,3 +172,9 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# Ingnore langchain-ai repo
+langchain-ai/
+
+# Ignore faiss index files
+faiss_index/

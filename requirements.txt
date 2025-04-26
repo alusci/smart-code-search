@@ -6,3 +6,4 @@ langchain-openai>=0.0.2
 langchain-ollama>=0.1.0
 gradio>=3.37.0
 faiss-cpu>=1.7.3
+ragas>=0.2.14

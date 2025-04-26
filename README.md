@@ -51,7 +51,7 @@ CHUNK_OVERLAP=100
 
 # OpenAI API settings
 OPENAI_API_KEY=your-api-key-here
-EMBEDDING_MODEL=text-embedding-ada-002
+EMBEDDING_MODEL=text-embedding-3-small
 ```
 
 ## Usage

@@ -18,9 +18,8 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 GET_ALL_FILES = os.getenv("ALL_FILES", "False").lower() in ("true", "1", "yes")
 CHUNK_SIZE = int(os.getenv("CHUNK_SIZE", "1000"))
 CHUNK_OVERLAP = int(os.getenv("CHUNK_OVERLAP", "100"))
-EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "text-embedding-3-small")
-VECTOR_DIMENSION = int(os.getenv("VECTOR_DIMENSION", "1536"))
-LLM_MODEL = os.getenv("LLM_MODEL", "gpt-4o")
+OPENAI_EMBEDDING_MODEL = os.getenv("OPENAI_EMBEDDING_MODEL", "text-embedding-3-small")
+OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o")
 
 # Validate required parameters
 if not REPO_URL:

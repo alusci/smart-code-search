@@ -1,6 +1,6 @@
-from .config import OPENAI_API_KEY, EMBEDDING_MODEL
-from langchain_community.embeddings import OpenAIEmbeddings
-from langchain_community.chat_models import ChatOpenAI
+from .config import OPENAI_API_KEY, OPENAI_EMBEDDING_MODEL, OPENAI_MODEL
+from langchain_openai import OpenAIEmbeddings
+from langchain_openai import ChatOpenAI
 
 def initialize_embeddings():
     """
@@ -9,7 +9,7 @@ def initialize_embeddings():
     
     return OpenAIEmbeddings(
         api_key=OPENAI_API_KEY,
-        model=EMBEDDING_MODEL,
+        model=OPENAI_EMBEDDING_MODEL,
         disallowed_special=()
     )
 
@@ -19,7 +19,7 @@ def initialize_llm():
     """
     
     llm = ChatOpenAI(
-        model_name="gpt-4o",
+        model_name=OPENAI_MODEL,
         temperature=0.0
     )
     

@@ -1,4 +1,5 @@
 import os
+import argparse
 from utils.models import initialize_llm
 from ragas.metrics import (
     faithfulness,
@@ -95,17 +96,72 @@ def parse_evaluation_questions(questions):
 
     return evaluation_data
     
-        
+
+def parse_arguments():
+    """
+    Parse command line arguments.
+    """
+    parser = argparse.ArgumentParser(description="Evaluate RAG pipeline performance")
+    
+    parser.add_argument(
+        "--input-file", 
+        "-i",
+        type=str, 
+        default="data/evaluation_questions.json",
+        help="Path to the evaluation questions JSON file"
+    )
+    
+    parser.add_argument(
+        "--output-file",
+        "-o", 
+        type=str, 
+        default="data/rag_evaluation_results.csv",
+        help="Path to save the evaluation results CSV file"
+    )
+    
+    parser.add_argument(
+        "--workers",
+        "-w",
+        type=int,
+        default=2,
+        help="Number of workers for parallel evaluation"
+    )
+    
+    parser.add_argument(
+        "--timeout",
+        "-t",
+        type=int,
+        default=60,
+        help="Timeout in seconds for evaluation requests"
+    )
+    
+    return parser.parse_args()
+       
        
 if __name__ == "__main__":
+    # Parse command line arguments
+    args = parse_arguments()
+    
+    # Create output directory if it doesn't exist
+    os.makedirs(os.path.dirname(args.output_file), exist_ok=True)
 
     # Load evaluation questions and answers
-    with open("data/evaluation_questions.json", "r") as fp:
-        evaluation_questions = json.load(fp)
+    print(f"Loading evaluation data from {args.input_file}")
+    try:
+        with open(args.input_file, "r") as fp:
+            evaluation_questions = json.load(fp)
+    except FileNotFoundError:
+        print(f"Error: Input file '{args.input_file}' not found.")
+        exit(1)
+    except json.JSONDecodeError:
+        print(f"Error: Input file '{args.input_file}' is not a valid JSON file.")
+        exit(1)
 
     evaluation_data = parse_evaluation_questions(evaluation_questions)
+    print(f"Loaded {len(evaluation_data['questions'])} evaluation questions")
     
     try:
+        print("Running evaluation...")
         # Run evaluation
         results = evaluate_rag_pipeline(
             queries=evaluation_data["questions"],
@@ -115,7 +171,7 @@ if __name__ == "__main__":
         )
         
         print(results.head())
-        print("Evaluation results:")
+        print("\nEvaluation results:")
         metrics = [
             'faithfulness', 'answer_relevancy', 'context_precision', 'context_recall'
         ]
@@ -123,8 +179,8 @@ if __name__ == "__main__":
             print(f"{metric}: {results[metric].mean():.4f}")
 
         # Save results to CSV
-        os.makedirs("data", exist_ok=True)
-        results.to_csv("data/rag_evaluation_results.csv", index=False)
+        results.to_csv(args.output_file, index=False)
+        print(f"Results saved to {args.output_file}")
             
     except Exception as e:
         print(f"Error during evaluation: {e}")

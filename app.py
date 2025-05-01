@@ -1,4 +1,3 @@
-# filepath: /Users/alusci/code/smart-code-search/app.py
 import gradio as gr
 from utils.qa_chain import search_code
 
@@ -31,6 +30,14 @@ with gr.Blocks(title="Smart Code Search") as demo:
                     label="Number of Results (for Code Retrieval)"
                 )
             
+            # Add re-ranking option
+            with gr.Row():
+                use_reranking = gr.Checkbox(
+                    label="Use Re-ranking",
+                    value=False,
+                    info="Improves context relevance by using Maximal Marginal Relevance"
+                )
+            
             # Search button
             search_button = gr.Button("Search", variant="primary")
         
@@ -40,12 +47,13 @@ with gr.Blocks(title="Smart Code Search") as demo:
     
     # Connect the search button to the search function
     search_button.click(
-        fn=lambda query, search_type, k: search_code(
+        fn=lambda query, search_type, k, rerank: search_code(
             query,
             "qa" if search_type == "Question Answering" else "similarity",
-            k
+            k,
+            rerank=rerank
         ),
-        inputs=[query_input, search_type, num_results],
+        inputs=[query_input, search_type, num_results, use_reranking],
         outputs=results_output
     )
     
@@ -53,6 +61,7 @@ with gr.Blocks(title="Smart Code Search") as demo:
     gr.Markdown("""
     - **Question Answering**: Ask natural language questions about your codebase like "How does the document indexing work?"
     - **Code Retrieval**: Find specific code snippets with queries like "function to load documents" or "error handling in vectorstore"
+    - **Re-ranking**: Enable this option to improve context relevance for complex queries
     """)
 
 if __name__ == "__main__":

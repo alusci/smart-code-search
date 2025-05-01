@@ -6,6 +6,9 @@ from utils.models import initialize_embeddings, initialize_llm
 from utils.qa_chain import qa_search
 from tqdm import tqdm
 
+NUM_SAMPLES = 10
+NUM_NEIGHBORS = 5
+
 def sample_text_chunks(vectorstore, num_samples=5, neighbors=5):
     """
     Sample random text chunks from the vectorstore along with their nearest neighbors.
@@ -189,13 +192,16 @@ def generate_evaluation_answers(questions):
     return answers
 
 
-def generate_rag_answers(questions, vectorstore, k=5):
+def generate_rag_answers(questions, vectorstore, k=5, top_k=20, rerank=False):
     """
     Generate answers for the evaluation questions using the RAG pipeline.
     
     Args:
         questions: List of evaluation questions
         vectorstore: The desired vectorstore
+        k: Number of neighbors to retrieve
+        top_k: Number of documents to retrieve for re-ranking
+        rerank: Whether to use re-ranking for the answers
         
     Returns:
         list: List of dictionaries containing questions and their generated answers
@@ -209,7 +215,10 @@ def generate_rag_answers(questions, vectorstore, k=5):
         answer, sources = qa_search(
             query=question["question"],
             vectorstore=vectorstore,
-            return_formatted=False
+            k=k,
+            top_k=top_k,
+            return_formatted=False,
+            rerank=rerank,
         )
         question["rag_answer"] = answer
         question["rag_context"] = [doc.page_content for doc in sources]
@@ -226,7 +235,7 @@ def main():
     
     try:
         # Sample text chunks with neighbors
-        samples = sample_text_chunks(vectorstore, num_samples=5, neighbors=5)
+        samples = sample_text_chunks(vectorstore, num_samples=NUM_SAMPLES, neighbors=NUM_NEIGHBORS)
         print(f"Successfully sampled {len(samples)} text chunks with neighbors")
         
         # Generate evaluation questions
@@ -238,7 +247,7 @@ def main():
         print(f"Generated answers for {len(questions)} questions")
 
         # Generate RAG answers for the questions
-        generate_rag_answers(questions, vectorstore)
+        generate_rag_answers(questions, vectorstore, k=NUM_NEIGHBORS)
         print(f"Generated RAG answers for {len(questions)} questions")
         
         # Save questions for later evaluation

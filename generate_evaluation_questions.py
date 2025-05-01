@@ -7,7 +7,7 @@ from utils.qa_chain import qa_search
 from tqdm import tqdm
 
 NUM_SAMPLES = 10
-NUM_NEIGHBORS = 5
+NUM_NEIGHBORS = 7
 
 def sample_text_chunks(vectorstore, num_samples=5, neighbors=5):
     """

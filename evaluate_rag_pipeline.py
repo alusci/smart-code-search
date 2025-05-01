@@ -150,6 +150,12 @@ if __name__ == "__main__":
     try:
         with open(args.input_file, "r") as fp:
             evaluation_questions = json.load(fp)
+            all_questions = len(evaluation_questions)
+            invalid_answer = "I don't have enough information to answer this question."
+            evaluation_questions = [
+                question for question in evaluation_questions if question["rag_answer"] != invalid_answer
+            ]
+            print("Found {} valid questions out of {}".format(len(evaluation_questions), all_questions))
     except FileNotFoundError:
         print(f"Error: Input file '{args.input_file}' not found.")
         exit(1)

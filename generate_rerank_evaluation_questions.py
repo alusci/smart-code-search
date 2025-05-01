@@ -16,7 +16,7 @@ def main():
         return
 
     generate_rag_answers(
-        questions, vectorstore, k=NUM_NEIGHBORS, top_k=NUM_TOP_K, rerank=False
+        questions, vectorstore, k=NUM_NEIGHBORS, top_k=NUM_TOP_K, rerank=True
     )
 
     # Save questions for later evaluation

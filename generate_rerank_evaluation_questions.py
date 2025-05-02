@@ -2,8 +2,8 @@ import json
 from generate_evaluation_questions import generate_rag_answers
 from utils.vectorstore import get_vectorstore
 
-NUM_NEIGHBORS = 5
-NUM_TOP_K = 20
+NUM_NEIGHBORS = 18
+NUM_TOP_K = 52
 
 def main():
     # Load evaluation questions and answers

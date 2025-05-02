@@ -1,4 +1,4 @@
-def create_mmr_retriever(vectorstore, k=5, top_k=20, lambda_mult=0.5):
+def create_mmr_retriever(vectorstore, k=5, top_k=20, lambda_mult=0.8):
     """
     Create a retriever with optional re-ranking capability.
     

@@ -150,7 +150,7 @@ def generate_evaluation_questions(samples, num_questions=2):
 
 def generate_evaluation_answers(questions):
     """
-    Generate answers for the evaluation questions using the RAG pipeline.
+    Generate answers for the evaluation questions using the provided context.
     
     Args:
         questions: List of evaluation questions

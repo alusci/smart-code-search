@@ -24,7 +24,7 @@ with gr.Blocks(title="Smart Code Search") as demo:
                 )
                 num_results = gr.Slider(
                     minimum=1,
-                    maximum=10,
+                    maximum=15,
                     value=5,
                     step=1,
                     label="Number of Results (for Code Retrieval)"

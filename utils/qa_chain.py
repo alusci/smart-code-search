@@ -6,7 +6,7 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_core.prompts import ChatPromptTemplate
 
-def qa_search(query, vectorstore, k=5, top_k=20, return_formatted=True, rerank=False):
+def qa_search(query, vectorstore, k=5, top_k=50, return_formatted=True, rerank=False):
     """
     Answer questions about the codebase using the vectorstore and LLM.
     
@@ -45,8 +45,14 @@ def qa_search(query, vectorstore, k=5, top_k=20, return_formatted=True, rerank=F
     Question:
     {question}
     
-    Answer the question based only on the provided context. If the context doesn't contain the relevant information, 
-    say "I don't have enough information to answer this question." Don't make up information.
+    Answer the question based only on the provided context.
+    If the context is incomplete or vague, do your best to respond using the available information. 
+    If the question appears incomplete (e.g. starts with “Can you find”, “Do you”, or cuts off unexpectedly), politely inform the user that the question seems incomplete and ask them to rephrase. 
+    If a full answer isn’t possible, clearly state what’s missing and politely ask the user for clarification. 
+    Do not invent or assume facts that are not explicitly present in the context. 
+    Keep responses brief and focused (no more than 500 words). 
+    Use bullet points and code samples whenever appropriate to improve clarity. 
+    Avoid repetition and long paragraphs. 
     """
     
     prompt = ChatPromptTemplate.from_template(template)

@@ -25,7 +25,8 @@ def get_vectorstore(documents: list = None):
     
     return vectorstore
 
-def init_vectorstore(documents, batch_size=100):
+
+def init_vectorstore(documents, batch_size=100) -> bool:
     """
     Init FAISS vector store with batched processing for better performance
     
@@ -58,33 +59,7 @@ def init_vectorstore(documents, batch_size=100):
     remaining = documents[batch_size:] if batch_size < len(documents) else []
     
     if remaining:
-        # Calculate total batches for the progress bar
-        total_batches = (len(remaining) + batch_size - 1) // batch_size
-        
-        print(f"Processing remaining {len(remaining)} documents in {total_batches} batches:")
-        
-        # Create progress bar
-        pbar = tqdm(total=len(remaining), unit="docs", desc="Embedding")
-        
-        for i in range(0, len(remaining), batch_size):
-            batch = remaining[i:i+batch_size]
-            batch_start = time.time()
-            
-            # Update progress bar description with current batch info
-            pbar.set_description(f"Batch {i//batch_size + 1}/{total_batches}")
-            
-            # Add documents to vectorstore
-            vectorstore.add_documents(batch)
-            
-            # Update progress bar
-            pbar.update(len(batch))
-            
-            # Calculate and display batch processing time
-            batch_time = time.time() - batch_start
-            docs_per_second = len(batch) / batch_time if batch_time > 0 else 0
-            pbar.set_postfix({"docs/s": f"{docs_per_second:.1f}"})
-        
-        pbar.close()
+        add_document_batches(documents, vectorstore, batch_size=batch_size)
     
     # Calculate and display total processing time
     total_time = time.time() - start_time
@@ -92,6 +67,42 @@ def init_vectorstore(documents, batch_size=100):
     print(f"Completed vectorstore creation in {total_time:.1f}s ({docs_per_second:.1f} docs/s)")
     
     return vectorstore
+
+
+def add_document_batches(documents, vectorstore, batch_size=100):
+
+    # Calculate total batches for the progress bar
+    total_batches = (len(documents) + batch_size - 1) // batch_size
+    
+    print(f"Processing {len(documents)} documents in {total_batches} batches:")
+    
+    # Create progress bar
+    pbar = tqdm(total=len(documents), unit="docs", desc="Embedding")
+    
+    for i in range(0, len(documents), batch_size):
+        batch = documents[i:i+batch_size]
+        batch_start = time.time()
+        
+        # Update progress bar description with current batch info
+        pbar.set_description(f"Batch {i//batch_size + 1}/{total_batches}")
+        
+        # Add documents to vectorstore
+        try:
+            vectorstore.add_documents(batch)
+        except Exception as e:
+            # In a real production scenario you should not catch such a generic exception
+            print(e)
+        
+        # Update progress bar
+        pbar.update(len(batch))
+        
+        # Calculate and display batch processing time
+        batch_time = time.time() - batch_start
+        docs_per_second = len(batch) / batch_time if batch_time > 0 else 0
+        pbar.set_postfix({"docs/s": f"{docs_per_second:.1f}"})
+    
+    pbar.close()
+
 
 def save_vectorstore(vectorstore):
     """Save the vector store to disk"""

@@ -1,14 +1,14 @@
 import os
 import git
 from typing import List
-from .vectorstore import get_vectorstore, init_vectorstore
+from .vectorstore import get_vectorstore, init_vectorstore, add_document_batches
 
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.document_loaders import TextLoader, UnstructuredFileLoader
 from langchain_community.document_loaders.csv_loader import CSVLoader
 from langchain_community.document_loaders.notebook import NotebookLoader
 from langchain_community.document_loaders.pdf import PyPDFLoader
-from langchain.schema import Document
+from langchain_core.documents import Document
 
 
 def get_changed_files(repo_url: str, repo_path: str, get_all_files: bool = False) -> List[str]:
@@ -134,8 +134,7 @@ def index_documents(documents):
     
     vectorstore = get_vectorstore()
     if vectorstore:
-        vectorstore.add_documents(documents)
+        add_document_batches(documents, vectorstore)
     else:
         vectorstore = init_vectorstore(documents)
     return vectorstore 
-

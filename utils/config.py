@@ -11,21 +11,16 @@ load_dotenv()
 # Required parameters
 REPO_URL = os.getenv("GIT_REPO_URL")
 REPO_PATH = os.getenv("GIT_REPO_PATH")
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-
 
 # Optional parameters with defaults
 GET_ALL_FILES = os.getenv("ALL_FILES", "False").lower() in ("true", "1", "yes")
 CHUNK_SIZE = int(os.getenv("CHUNK_SIZE", "1000"))
 CHUNK_OVERLAP = int(os.getenv("CHUNK_OVERLAP", "100"))
-OPENAI_EMBEDDING_MODEL = os.getenv("OPENAI_EMBEDDING_MODEL", "text-embedding-3-small")
-OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o")
+EMBEDDING_MODEL = os.getenv("OPENAI_EMBEDDING_MODEL", "nomic-embed-text")
+LLM_MODEL = os.getenv("OPENAI_MODEL", "llama3.2:1b")
 
 # Validate required parameters
 if not REPO_URL:
     raise ValueError("GIT_REPO_URL is not set in the .env file")
 if not REPO_PATH:
     raise ValueError("GIT_REPO_PATH is not set in the .env file")
-if not OPENAI_API_KEY:
-    raise ValueError("OPENAI_API_KEY is not set in the .env file")
-

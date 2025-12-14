@@ -49,9 +49,15 @@ ALL_FILES=True # Set this parameter to False if you want to index just the lates
 CHUNK_SIZE=1000
 CHUNK_OVERLAP=100
 
-# OpenAI API settings
-OPENAI_API_KEY=your-api-key-here
-EMBEDDING_MODEL=text-embedding-3-small
+# LLM and embedding model settings
+LLM_MODEL=llama3.2:1b
+EMBEDDING_MODEL=nomic-embed-text
+
+# Download Ollama and pull required models
+
+```bash
+ollama pull llama3.2:1b
+ollama pull nomic-embed-text:latest
 ```
 
 ## Usage

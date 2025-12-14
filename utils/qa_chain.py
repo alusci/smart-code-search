@@ -3,7 +3,6 @@ from .response_formatter import format_response
 from .reranker import create_mmr_retriever
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
-from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_core.prompts import ChatPromptTemplate
 
 def qa_search(query, vectorstore, k=5, top_k=50, return_formatted=True, rerank=False):
@@ -57,13 +56,11 @@ def qa_search(query, vectorstore, k=5, top_k=50, return_formatted=True, rerank=F
     
     prompt = ChatPromptTemplate.from_template(template)
     
-    # Create document chain
-    document_chain = create_stuff_documents_chain(llm, prompt)
-    
     # Create retrieval chain
     retrieval_chain = (
         {"context": retriever, "question": RunnablePassthrough()}
-        | document_chain
+        | prompt
+        | llm
         | StrOutputParser()
     )
     
@@ -119,4 +116,13 @@ def search_code(query, search_type="qa", k=5, rerank=False, vectorstore=None):
             return format_response(f"Results for: {query}", results)
         except Exception as e:
             return f"Error during search: {str(e)}"
+        
+if __name__ == "__main__":
+
+    from .vectorstore import get_vectorstore
+
+    vectorstore = get_vectorstore()
+    query = "Can you tell me how  RecursiveCharacterTextSplitter works?"
+    response = qa_search(query, vectorstore=vectorstore)
+    print(response)
 
